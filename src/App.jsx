@@ -2,7 +2,8 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { Box, Flex, Link } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import Index from "./pages/Index.jsx";
-import Venues from "./pages/Venues.jsx"; // Add this import
+import Venues from "./pages/Venues.jsx";
+import EventDetails from "./pages/EventDetails.jsx"; // Add this import
 
 const Navbar = () => (
   <Box bg="teal.500" px={4} py={2}>
@@ -23,7 +24,8 @@ function App() {
       <Navbar />
       <Routes>
         <Route exact path="/" element={<Index />} />
-      <Route path="/venues" element={<Venues />} />
+        <Route path="/venues" element={<Venues />} />
+        <Route path="/event/:id" element={<EventDetails />} /> {/* Add this route inside the <Routes> component */}
       </Routes>
     </Router>
   );
