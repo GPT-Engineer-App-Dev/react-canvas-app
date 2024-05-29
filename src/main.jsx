@@ -3,6 +3,8 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
+import { SupabaseProvider } from "./integrations/supabase";
+
 const colors = {
   brand: {
     900: "#1a365d",
@@ -16,7 +18,9 @@ const theme = extendTheme({ colors });
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
-      <App />
+      <SupabaseProvider>
+        <App />
+      </SupabaseProvider>
     </ChakraProvider>
   </React.StrictMode>
 );
