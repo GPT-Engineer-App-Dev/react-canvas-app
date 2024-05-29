@@ -3,7 +3,8 @@ import { Box, Flex, Link } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import Index from "./pages/Index.jsx";
 import Venues from "./pages/Venues.jsx";
-import EventDetails from "./pages/EventDetails.jsx"; // Add this import
+import EventDetails from "./pages/EventDetails.jsx";
+import PinnedEvents from "./pages/PinnedEvents.jsx";
 
 const Navbar = () => (
   <Box bg="teal.500" px={4} py={2}>
@@ -13,6 +14,9 @@ const Navbar = () => (
       </Link>
       <Link as={RouterLink} to="/venues" color="white" fontWeight="bold" fontSize="lg">
         Venues
+      </Link>
+      <Link as={RouterLink} to="/pinned" color="white" fontWeight="bold" fontSize="lg">
+        Pinned Events
       </Link>
     </Flex>
   </Box>
@@ -25,7 +29,8 @@ function App() {
       <Routes>
         <Route exact path="/" element={<Index />} />
         <Route path="/venues" element={<Venues />} />
-        <Route path="/event/:id" element={<EventDetails />} /> {/* Add this route inside the <Routes> component */}
+        <Route path="/event/:id" element={<EventDetails />} />
+        <Route path="/pinned" element={<PinnedEvents />} />
       </Routes>
     </Router>
   );
