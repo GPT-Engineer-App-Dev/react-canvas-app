@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Container, Text, VStack, Table, Thead, Tbody, Tr, Th, Td, Button, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, FormControl, FormLabel, Input, Select, useToast } from "@chakra-ui/react"; // Add Select import
 import { useEvents, useAddEvent, useUpdateEvent, useDeleteEvent, useVenues } from "../integrations/supabase"; // Add useVenues import
 import { FaEdit, FaTrash } from "react-icons/fa";
+import { Link as RouterLink } from "react-router-dom"; // Add this import
 
 const Index = () => {
   const { data: events, isLoading, isError } = useEvents();
@@ -81,6 +82,11 @@ const Index = () => {
                   <Td>
                     <IconButton icon={<FaEdit />} onClick={() => handleEdit(event)} mr={2} />
                     <IconButton icon={<FaTrash />} onClick={() => handleDelete(event.id)} />
+                  </Td>
+                  <Td>
+                    <RouterLink to={`/event/${event.id}`}>
+                      <Button colorScheme="teal">View Details</Button>
+                    </RouterLink>
                   </Td>
                 </Tr>
               ))}
