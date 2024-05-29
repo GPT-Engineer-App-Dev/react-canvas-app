@@ -27,7 +27,7 @@ const EventDetails = () => {
         {event.latitude && event.longitude && (
           <AspectRatio ratio={16 / 9} width="100%">
             <iframe
-              src={`https://www.google.com/maps/embed/v1/view?key=YOUR_GOOGLE_MAPS_API_KEY&center=${event.latitude},${event.longitude}&zoom=14`}
+              src={`https://www.google.com/maps/embed/v1/view?key=AIzaSyDnD1xkyd4t61HhRua13cyVC2SB8vqPoMM&center=${event.latitude},${event.longitude}&zoom=14`}
               width="600"
               height="450"
               style={{ border: 0 }}
