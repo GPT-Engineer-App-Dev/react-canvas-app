@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Container, Text, VStack, Table, Thead, Tbody, Tr, Th, Td, Button, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, FormControl, FormLabel, Input, Select, useToast } from "@chakra-ui/react"; // Add Select import
-import { useEvents, useAddEvent, useUpdateEvent, useDeleteEvent, useVenues } from "../integrations/supabase"; // Add useVenues import
-import { FaEdit, FaTrash } from "react-icons/fa";
-import { Link as RouterLink } from "react-router-dom"; // Add this import
+import { Container, Text, VStack, Table, Thead, Tbody, Tr, Th, Td, Button, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, FormControl, FormLabel, Input, Select, useToast } from "@chakra-ui/react";
+import { useEvents, useAddEvent, useUpdateEvent, useDeleteEvent, useVenues } from "../integrations/supabase";
+import { FaEdit, FaTrash, FaThumbtack } from "react-icons/fa"; // Import FaThumbtack
+import { Link as RouterLink } from "react-router-dom";
 
 const Index = () => {
   const { data: events, isLoading, isError } = useEvents();
-  const { data: venues } = useVenues(); // Fetch venues
+  const { data: venues } = useVenues();
   const addEvent = useAddEvent();
   const updateEvent = useUpdateEvent();
   const deleteEvent = useDeleteEvent();
@@ -52,6 +52,15 @@ const Index = () => {
     }
   };
 
+  const handlePin = async (event) => {
+    try {
+      await updateEvent.mutateAsync({ ...event, is_pinned: !event.is_pinned });
+      toast({ title: `Event ${event.is_pinned ? "unpinned" : "pinned"}.`, status: "success", duration: 3000, isClosable: true });
+    } catch (error) {
+      toast({ title: "An error occurred.", description: error.message, status: "error", duration: 3000, isClosable: true });
+    }
+  };
+
   return (
     <Container centerContent maxW="container.md" py={8}>
       <VStack spacing={4} width="100%">
@@ -68,7 +77,8 @@ const Index = () => {
                 <Th>Name</Th>
                 <Th>Date</Th>
                 <Th>Description</Th>
-                <Th>Venue</Th> {/* Change to Venue */}
+                <Th>Venue</Th>
+                <Th>Pin</Th> {/* Add Pin column */}
                 <Th>Actions</Th>
               </Tr>
             </Thead>
@@ -78,7 +88,10 @@ const Index = () => {
                   <Td>{event.name}</Td>
                   <Td>{event.date}</Td>
                   <Td>{event.description}</Td>
-                  <Td>{venues?.find((venue) => venue.id === event.venue_id)?.name || "N/A"}</Td> {/* Display venue name */}
+                  <Td>{venues?.find((venue) => venue.id === event.venue_id)?.name || "N/A"}</Td>
+                  <Td>
+                    <IconButton icon={<FaThumbtack />} onClick={() => handlePin(event)} colorScheme={event.is_pinned ? "yellow" : "gray"} />
+                  </Td> {/* Add Pin action */}
                   <Td>
                     <IconButton icon={<FaEdit />} onClick={() => handleEdit(event)} mr={2} />
                     <IconButton icon={<FaTrash />} onClick={() => handleDelete(event.id)} />
