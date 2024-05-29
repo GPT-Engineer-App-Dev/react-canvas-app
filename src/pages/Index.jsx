@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Container, Text, VStack, Table, Thead, Tbody, Tr, Th, Td, Button, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, FormControl, FormLabel, Input, Select, useToast } from "@chakra-ui/react";
+import { useState, useRef, useEffect } from "react";
+import { Container, Text, VStack, Table, Thead, Tbody, Tr, Th, Td, Button, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, FormControl, FormLabel, Input, Select, useToast, Box } from "@chakra-ui/react";
 import { useEvents, useAddEvent, useUpdateEvent, useDeleteEvent, useVenues } from "../integrations/supabase";
 import { FaEdit, FaTrash, FaThumbtack } from "react-icons/fa";
 import { Link as RouterLink } from "react-router-dom";
@@ -14,6 +14,9 @@ const Index = () => {
   const [currentEvent, setCurrentEvent] = useState(null);
   const [formState, setFormState] = useState({ name: "", date: "", description: "", venue_id: "", image_url: "", pdf_url: "", latitude: "", longitude: "" });
   const toast = useToast();
+  const [map, setMap] = useState(null);
+  const [marker, setMarker] = useState(null);
+  const mapRef = useRef(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -60,6 +63,36 @@ const Index = () => {
       toast({ title: "An error occurred.", description: error.message, status: "error", duration: 3000, isClosable: true });
     }
   };
+
+  useEffect(() => {
+    if (mapRef.current && !map) {
+      const googleMap = new window.google.maps.Map(mapRef.current, {
+        center: { lat: -34.397, lng: 150.644 },
+        zoom: 8,
+      });
+      setMap(googleMap);
+    }
+  }, [mapRef, map]);
+
+  useEffect(() => {
+    if (map) {
+      map.addListener("click", (e) => {
+        const lat = e.latLng.lat();
+        const lng = e.latLng.lng();
+        setFormState((prevState) => ({ ...prevState, latitude: lat, longitude: lng }));
+
+        if (marker) {
+          marker.setPosition(e.latLng);
+        } else {
+          const newMarker = new window.google.maps.Marker({
+            position: e.latLng,
+            map: map,
+          });
+          setMarker(newMarker);
+        }
+      });
+    }
+  }, [map, marker]);
 
   return (
     <Container centerContent maxW="container.md" py={8}>
@@ -143,13 +176,9 @@ const Index = () => {
               <FormLabel>PDF URL</FormLabel>
               <Input name="pdf_url" value={formState.pdf_url} onChange={handleInputChange} />
             </FormControl>
-            <FormControl id="latitude" mb={4}>
-              <FormLabel>Latitude</FormLabel>
-              <Input name="latitude" value={formState.latitude} onChange={handleInputChange} />
-            </FormControl>
-            <FormControl id="longitude" mb={4}>
-              <FormLabel>Longitude</FormLabel>
-              <Input name="longitude" value={formState.longitude} onChange={handleInputChange} />
+            <FormControl id="map" mb={4}>
+              <FormLabel>Location</FormLabel>
+              <Box ref={mapRef} width="100%" height="400px" />
             </FormControl>
           </ModalBody>
           <ModalFooter>
