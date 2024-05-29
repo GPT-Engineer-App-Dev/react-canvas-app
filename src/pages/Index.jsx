@@ -66,11 +66,16 @@ const Index = () => {
 
   useEffect(() => {
     if (mapRef.current && !map) {
-      const googleMap = new window.google.maps.Map(mapRef.current, {
-        center: { lat: -34.397, lng: 150.644 },
-        zoom: 8,
-      });
-      setMap(googleMap);
+      const interval = setInterval(() => {
+        if (window.google && window.google.maps) {
+          const googleMap = new window.google.maps.Map(mapRef.current, {
+            center: { lat: -34.397, lng: 150.644 },
+            zoom: 8,
+          });
+          setMap(googleMap);
+          clearInterval(interval);
+        }
+      }, 100);
     }
   }, [mapRef, map]);
 
