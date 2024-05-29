@@ -32,6 +32,8 @@ Event // table: events
     is_pinned: boolean
     image_url: string
     pdf_url: string
+    latitude: string
+    longitude: string
 
 Comment // table: comments
     id: number
@@ -54,7 +56,7 @@ Venue // table: venues
 // Events hooks
 export const useEvents = () => useQuery({
     queryKey: ['events'],
-    queryFn: () => fromSupabase(supabase.from('events').select('*')),
+    queryFn: () => fromSupabase(supabase.from('events').select('id, created_at, name, date, description, venue_id, is_pinned, image_url, pdf_url, latitude, longitude')),
 });
 export const useAddEvent = () => {
     const queryClient = useQueryClient();
@@ -86,7 +88,7 @@ export const useDeleteEvent = () => {
 
 export const useEvent = (id) => useQuery({
     queryKey: ['event', id],
-    queryFn: () => fromSupabase(supabase.from('events').select('*').eq('id', id).single()),
+    queryFn: () => fromSupabase(supabase.from('events').select('id, created_at, name, date, description, venue_id, is_pinned, image_url, pdf_url, latitude, longitude').eq('id', id).single()),
 });
 
 // Comments hooks
