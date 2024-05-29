@@ -3,6 +3,9 @@ import { Container, Text, VStack, Table, Thead, Tbody, Tr, Th, Td, Button, IconB
 import { useEvents, useAddEvent, useUpdateEvent, useDeleteEvent, useVenues } from "../integrations/supabase";
 import { FaEdit, FaTrash, FaThumbtack } from "react-icons/fa";
 import { Link as RouterLink } from "react-router-dom";
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 const Index = () => {
   const { data: events, isLoading, isError } = useEvents();
@@ -12,7 +15,7 @@ const Index = () => {
   const deleteEvent = useDeleteEvent();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentEvent, setCurrentEvent] = useState(null);
-  const [formState, setFormState] = useState({ name: "", date: "", description: "", venue_id: "", image_url: "", pdf_url: "", latitude: "", longitude: "" });
+  const [formState, setFormState] = useState({ name: "", date: "", description: "", venue_id: "", image_url: "", pdf_url: "", latitude: 51.505, longitude: -0.09 });
   const toast = useToast();
 
   const handleInputChange = (e) => {
@@ -29,7 +32,7 @@ const Index = () => {
         await addEvent.mutateAsync(formState);
         toast({ title: "Event added.", status: "success", duration: 3000, isClosable: true });
       }
-      setFormState({ name: "", date: "", description: "", venue_id: "", image_url: "", pdf_url: "", latitude: "", longitude: "" });
+      setFormState({ name: "", date: "", description: "", venue_id: "", image_url: "", pdf_url: "", latitude: 51.505, longitude: -0.09 });
       setCurrentEvent(null);
       onClose();
     } catch (error) {
@@ -59,6 +62,18 @@ const Index = () => {
     } catch (error) {
       toast({ title: "An error occurred.", description: error.message, status: "error", duration: 3000, isClosable: true });
     }
+  };
+
+  const LocationMarker = ({ position, setPosition }) => {
+    useMapEvents({
+      click(e) {
+        setPosition(e.latlng);
+      },
+    });
+
+    return position === null ? null : (
+      <Marker position={position} />
+    );
   };
 
   return (
@@ -145,12 +160,19 @@ const Index = () => {
             </FormControl>
             <FormControl id="latitude" mb={4}>
               <FormLabel>Latitude</FormLabel>
-              <Input name="latitude" value={formState.latitude} onChange={handleInputChange} />
+              <Input name="latitude" value={formState.latitude} onChange={handleInputChange} readOnly />
             </FormControl>
             <FormControl id="longitude" mb={4}>
               <FormLabel>Longitude</FormLabel>
-              <Input name="longitude" value={formState.longitude} onChange={handleInputChange} />
+              <Input name="longitude" value={formState.longitude} onChange={handleInputChange} readOnly />
             </FormControl>
+            <MapContainer center={[formState.latitude, formState.longitude]} zoom={13} style={{ height: "400px", width: "100%" }}>
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              />
+              <LocationMarker position={{ lat: formState.latitude, lng: formState.longitude }} setPosition={(latlng) => setFormState({ ...formState, latitude: latlng.lat, longitude: latlng.lng })} />
+            </MapContainer>
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={handleSubmit}>
