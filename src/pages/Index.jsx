@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Container, Text, VStack, Table, Thead, Tbody, Tr, Th, Td, Button, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, FormControl, FormLabel, Input, Select, useToast } from "@chakra-ui/react";
 import { useEvents, useAddEvent, useUpdateEvent, useDeleteEvent, useVenues } from "../integrations/supabase";
-import { FaEdit, FaTrash, FaThumbtack } from "react-icons/fa"; // Import FaThumbtack
+import { FaEdit, FaTrash, FaThumbtack } from "react-icons/fa";
 import { Link as RouterLink } from "react-router-dom";
 
 const Index = () => {
@@ -12,7 +12,7 @@ const Index = () => {
   const deleteEvent = useDeleteEvent();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentEvent, setCurrentEvent] = useState(null);
-  const [formState, setFormState] = useState({ name: "", date: "", description: "", venue_id: "", image_url: "", pdf_url: "" });
+  const [formState, setFormState] = useState({ name: "", date: "", description: "", venue_id: "", image_url: "", pdf_url: "", latitude: "", longitude: "" });
   const toast = useToast();
 
   const handleInputChange = (e) => {
@@ -29,7 +29,7 @@ const Index = () => {
         await addEvent.mutateAsync(formState);
         toast({ title: "Event added.", status: "success", duration: 3000, isClosable: true });
       }
-      setFormState({ name: "", date: "", description: "", venue_id: "", image_url: "", pdf_url: "" });
+      setFormState({ name: "", date: "", description: "", venue_id: "", image_url: "", pdf_url: "", latitude: "", longitude: "" });
       setCurrentEvent(null);
       onClose();
     } catch (error) {
@@ -78,7 +78,7 @@ const Index = () => {
                 <Th>Date</Th>
                 <Th>Description</Th>
                 <Th>Venue</Th>
-                <Th>Pin</Th> {/* Add Pin column */}
+                <Th>Pin</Th>
                 <Th>Actions</Th>
               </Tr>
             </Thead>
@@ -91,7 +91,7 @@ const Index = () => {
                   <Td>{venues?.find((venue) => venue.id === event.venue_id)?.name || "N/A"}</Td>
                   <Td>
                     <IconButton icon={<FaThumbtack />} onClick={() => handlePin(event)} colorScheme={event.is_pinned ? "yellow" : "gray"} />
-                  </Td> {/* Add Pin action */}
+                  </Td>
                   <Td>
                     <IconButton icon={<FaEdit />} onClick={() => handleEdit(event)} mr={2} />
                     <IconButton icon={<FaTrash />} onClick={() => handleDelete(event.id)} />
@@ -142,6 +142,14 @@ const Index = () => {
             <FormControl id="pdf_url" mb={4}>
               <FormLabel>PDF URL</FormLabel>
               <Input name="pdf_url" value={formState.pdf_url} onChange={handleInputChange} />
+            </FormControl>
+            <FormControl id="latitude" mb={4}>
+              <FormLabel>Latitude</FormLabel>
+              <Input name="latitude" value={formState.latitude} onChange={handleInputChange} />
+            </FormControl>
+            <FormControl id="longitude" mb={4}>
+              <FormLabel>Longitude</FormLabel>
+              <Input name="longitude" value={formState.longitude} onChange={handleInputChange} />
             </FormControl>
           </ModalBody>
           <ModalFooter>

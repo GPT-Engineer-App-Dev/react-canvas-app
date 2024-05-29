@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Container, Text, VStack, Box, Image, Divider, Heading, Spinner, useToast } from "@chakra-ui/react";
+import { Container, Text, VStack, Box, Image, Divider, Heading, Spinner, useToast, AspectRatio } from "@chakra-ui/react";
 import { useEvent, useComments } from "../integrations/supabase";
 
 const EventDetails = () => {
@@ -24,6 +24,19 @@ const EventDetails = () => {
         <Text>{event.date}</Text>
         <Image src={event.image_url} alt={event.name} />
         <Text>{event.description}</Text>
+        {event.latitude && event.longitude && (
+          <AspectRatio ratio={16 / 9} width="100%">
+            <iframe
+              src={`https://www.google.com/maps/embed/v1/view?key=YOUR_GOOGLE_MAPS_API_KEY&center=${event.latitude},${event.longitude}&zoom=14`}
+              width="600"
+              height="450"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </AspectRatio>
+        )}
         <Divider />
         <Heading size="md">Comments</Heading>
         {comments.length === 0 ? (
