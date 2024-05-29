@@ -76,6 +76,12 @@ const Index = () => {
           clearInterval(interval);
         }
       }, 100);
+
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDnD1xkyd4t61HhRua13cyVC2SB8vqPoMM&callback=initMap`;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
     }
   }, [mapRef, map]);
 
